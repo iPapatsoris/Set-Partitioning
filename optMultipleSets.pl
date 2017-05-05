@@ -14,10 +14,6 @@ minCost(P, C, [CurP|Pairings], [CurC|Costs], MinC) :-
 minCost(P, C, [_|Pairings], [_|Costs], MinC) :-
 	minCost(P, C, Pairings, Costs, MinC).
 
-identical([], []).
-identical([X|L1], [X|L2]) :-
-	identical(L1, L2).
-
 % Delete duplicates of P
 deleteDuplicates(_, [], [], [], []).
 deleteDuplicates(P, [P|Pairings], [_|Costs], TrimmedPairings, TrimmedCosts) :-

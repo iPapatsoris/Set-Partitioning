@@ -1,11 +1,15 @@
+identical([], []).
+identical([X|L1], [X|L2]) :-
+	identical(L1, L2).
+
 % Expanded with 'other' variables to also modify a second list according to sort
 quicksort([], [], [], []).
 quicksort([X|Tail], Sorted, [OtherX|OtherTail], OtherSorted) :-
     split(X, Tail, Small, Big, OtherTail, OtherSmall, OtherBig),
     quicksort(Small, SortedSmall, OtherSmall, OtherSortedSmall),
     quicksort(Big, SortedBig, OtherBig, OtherSortedBig),
-    append(SortedSmall, [X|SortedBig], Sorted),
-    append(OtherSortedSmall, [OtherX|OtherSortedBig], OtherSorted).
+    append(SortedBig, [X|SortedSmall], Sorted),
+    append(OtherSortedBig, [OtherX|OtherSortedSmall], OtherSorted).
 
 split(_, [], [], [], [], [], []).
 split(X, [Y|Tail], [Y|Small], Big, [OtherY|OtherTail], [OtherY|OtherSmall], OtherBig) :-

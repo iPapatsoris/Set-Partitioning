@@ -1,25 +1,36 @@
 :- lib(ic).
 :- lib(branch_and_bound).
 :- compile(flight_data).
-:- compile(quicksort).
+:- compile(util).
 :- compile(optMultipleSets).
 :- compile(optSubsumedSets).
 
 flights(I, Pairings, Cost) :-
 	get_flight_data(I, N, Pp, Cc),
-	preprocess(Pp, Cc, Pairings, Cost).
-/*	defineVars(C, TotalPairings, Solution),
+	preprocess(Pp, Cc, P, C),
+	defineVars(C, Solution),
 	constrain(1, P, Solution, N),
 	defineCosts(Solution, C, CostList),
 	Cost #= sum(CostList),
 	bb_min(search(Solution, 0, first_fail, indomain, complete, []), Cost, _),
-	map(Solution, P, C, Pairings).*/
+	map(Solution, P, C, Pairings).
 
 preprocess(Pairings, Costs, PrunedPairings, PrunedCosts) :-
-	optMultipleSets(Pairings, Costs, NewPairings, NewCosts),
-	optSubsumedSets(NewPairings, NewCosts, PrunedPairings, PrunedCosts).
+	quicksort(Costs, SortedCosts, Pairings, SortedPairings),
+	optMultipleSets(SortedPairings, SortedCosts, NewPairings, NewCosts),
+	optSubsumedSets(NewPairings, NewCosts, PrunedPairings, PrunedCosts),
+	displayPruning(Costs, NewCosts, PrunedCosts).
 
-defineVars(C, TotalPairings, Solution) :-
+displayPruning(Costs, NewCosts, PrunedCosts) :-
+	length(Costs, Len1),
+	length(NewCosts, Len2),
+	length(PrunedCosts, Len3),
+	writeln('Pruning:'),
+	writeln(Len1),
+	writeln(Len2),
+	writeln(Len3).
+
+defineVars(C, Solution) :-
 	length(C, TotalPairings),
 	length(Solution, TotalPairings),
 	Solution #:: [0,1].
