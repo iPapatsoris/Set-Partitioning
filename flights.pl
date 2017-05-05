@@ -1,17 +1,23 @@
 :- lib(ic).
 :- lib(branch_and_bound).
 :- compile(flight_data).
-:- compile(preprocess).
+:- compile(quicksort).
+:- compile(optMultipleSets).
+:- compile(optSubsumedSets).
 
 flights(I, Pairings, Cost) :-
 	get_flight_data(I, N, Pp, Cc),
-	preprocess(Pp, Cc, P, C).
+	preprocess(Pp, Cc, Pairings, Cost).
 /*	defineVars(C, TotalPairings, Solution),
 	constrain(1, P, Solution, N),
 	defineCosts(Solution, C, CostList),
 	Cost #= sum(CostList),
 	bb_min(search(Solution, 0, first_fail, indomain, complete, []), Cost, _),
 	map(Solution, P, C, Pairings).*/
+
+preprocess(Pairings, Costs, PrunedPairings, PrunedCosts) :-
+	optMultipleSets(Pairings, Costs, NewPairings, NewCosts),
+	optSubsumedSets(NewPairings, NewCosts, PrunedPairings, PrunedCosts).
 
 defineVars(C, TotalPairings, Solution) :-
 	length(C, TotalPairings),
@@ -33,7 +39,7 @@ associateFlightWithPairings(Flight, [P|Pairings], [X|Vars], [X|RestRelevant]) :-
 	member(Flight, P),
 	!,
 	associateFlightWithPairings(Flight, Pairings, Vars, RestRelevant).
-associateFlightWithPairings(Flight, [P|Pairings], [X|Vars], RestRelevant) :-
+associateFlightWithPairings(Flight, [_|Pairings], [_|Vars], RestRelevant) :-
 	associateFlightWithPairings(Flight, Pairings, Vars, RestRelevant).
 
 defineCosts([], [], []).
