@@ -16,3 +16,4 @@ Input inside flight_data.pl as
 * **N**: Total flights
 
 Using [ECLiPSe](http://eclipseclp.org/) platform.
+flight_data.pl and acsdata provided by instructor Panagiotis Stamatopoulos
